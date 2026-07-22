@@ -814,7 +814,7 @@ function initExamPage() {
         }
 
         if (isError) {
-            wall.style.background = 'rgba(20,5,5,0.97)';
+            wall.style.background = '#ffffff';
             wall.innerHTML = `
                 <div style="max-width:420px;padding:44px 36px;background:linear-gradient(135deg,#1a0505,#2d0a0a);border:1.5px solid #7f1d1d;border-radius:20px;box-shadow:0 32px 80px rgba(0,0,0,0.8);color:#fff;">
                     <div style="font-size:3rem;margin-bottom:16px;">🚫</div>
@@ -838,7 +838,7 @@ function initExamPage() {
                 });
             }
         } else {
-            wall.style.background = 'rgba(10,15,30,0.97)';
+            wall.style.background = '#ffffff';
             wall.innerHTML = `
                 <div style="max-width:420px;padding:44px 36px;">
                     <div style="font-size:3rem;margin-bottom:16px;">🖥️</div>
