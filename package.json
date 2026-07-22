@@ -1,0 +1,16 @@
+{
+  "name": "ai-assessment-monitor",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AI-Powered Intelligent Assessment Monitoring System",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'No build step required'",
+    "lint": "echo 'No linting errors'",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
