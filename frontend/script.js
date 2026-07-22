@@ -298,7 +298,7 @@ function initIndexPage() {
         modal.id = 'examInstructionsModal';
         modal.style.cssText = `
             position: fixed; inset: 0; z-index: 99999;
-            background: rgba(10,15,30,0.92);
+            background: rgba(255,255,255,0.92);
             display: flex; align-items: center; justify-content: center;
             backdrop-filter: blur(8px);
             animation: fadeInModal 0.35s ease;
@@ -308,14 +308,14 @@ function initIndexPage() {
             <style>
                 @keyframes fadeInModal { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
                 #examInstructionsModal .instr-card {
-                    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-                    border: 1.5px solid #334155;
+                    background: #ffffff;
+                    border: 1.5px solid #e2e8f0;
                     border-radius: 18px;
                     padding: 24px 30px 22px;
                     max-width: 500px;
                     width: 90%;
-                    box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(99,102,241,0.15);
-                    color: #f1f5f9;
+                    box-shadow: 0 24px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(99,102,241,0.1);
+                    color: #1e293b;
                     font-family: 'Inter', system-ui, sans-serif;
                 }
                 #examInstructionsModal .instr-header {
@@ -329,11 +329,11 @@ function initIndexPage() {
                     font-size: 1.15rem; flex-shrink: 0;
                 }
                 #examInstructionsModal .instr-title {
-                    font-size: 1.1rem; font-weight: 800; color: #f8fafc;
+                    font-size: 1.1rem; font-weight: 800; color: #0f172a;
                     letter-spacing: -0.02em;
                 }
                 #examInstructionsModal .instr-subtitle {
-                    font-size: 0.72rem; color: #94a3b8; margin-top: 1px;
+                    font-size: 0.72rem; color: #64748b; margin-top: 1px;
                 }
                 #examInstructionsModal .instr-list {
                     list-style: none; padding: 0; margin: 0 0 14px;
@@ -341,11 +341,11 @@ function initIndexPage() {
                 }
                 #examInstructionsModal .instr-list li {
                     display: flex; align-items: flex-start; gap: 8px;
-                    font-size: 0.82rem; color: #cbd5e1; line-height: 1.4;
+                    font-size: 0.82rem; color: #334155; line-height: 1.4;
                     padding: 7px 12px;
-                    background: rgba(255,255,255,0.04);
+                    background: #f8fafc;
                     border-radius: 8px;
-                    border: 1px solid rgba(255,255,255,0.07);
+                    border: 1px solid #e2e8f0;
                 }
                 #examInstructionsModal .instr-list li::before {
                     content: attr(data-icon);
