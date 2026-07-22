@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -216,5 +217,17 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`AI Assessment Monitor server running on http://0.0.0.0:${PORT}`);
+  const interfaces = os.networkInterfaces();
+  const addresses = [];
+
+  for (const name of Object.keys(interfaces)) {
+    for (const info of interfaces[name] || []) {
+      if (info.family === 'IPv4' && !info.internal) {
+        addresses.push(info.address);
+      }
+    }
+  }
+
+  const ipAddress = addresses[0] || 'localhost';
+  console.log(`AI Assessment Monitor server running on http://localhost:${PORT} and http://${ipAddress}:${PORT}`);
 });
