@@ -531,7 +531,9 @@ body::before {
     height: 100%;
     object-fit: cover;
     display: block;
+    transform: scaleX(-1);
 }
+
 
 .camera-placeholder {
     position: absolute;
