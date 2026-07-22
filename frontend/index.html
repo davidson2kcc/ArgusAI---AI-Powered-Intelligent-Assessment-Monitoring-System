@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assessment Monitor — Role-Based Secure Portal</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="login-page">
+        <div class="login-card">
+            <div class="login-card__brand">
+                <div class="login-card__logo">
+                    <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="28" rx="8" fill="#2563eb"/>
+                        <path d="M8 10.5C8 9.67 8.67 9 9.5 9H13.5C14.33 9 15 9.67 15 10.5V17.5C15 18.33 14.33 19 13.5 19H9.5C8.67 19 8 18.33 8 17.5V10.5Z" fill="white" fill-opacity="0.9"/>
+                        <path d="M13 12.5C13 11.67 13.67 11 14.5 11H18.5C19.33 11 20 11.67 20 12.5V17.5C20 18.33 19.33 19 18.5 19H14.5C13.67 19 13 18.33 13 17.5V12.5Z" fill="white" fill-opacity="0.6"/>
+                        <circle cx="11.5" cy="14" r="1.2" fill="#2563eb"/>
+                        <circle cx="16.5" cy="14" r="1.2" fill="#2563eb"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="login-card__title">AI Assessment Monitor</h1>
+                    <p class="login-card__subtitle">Select your role to access the assessment environment</p>
+                </div>
+            </div>
+
+            <!-- Role Selection Tabs -->
+            <div class="role-selector">
+                <button type="button" class="role-tab active" id="roleTabStudent" data-role="student">
+                    🎓 Student Candidate
+                </button>
+                <button type="button" class="role-tab" id="roleTabFaculty" data-role="faculty">
+                    👨‍🏫 Faculty / Invigilator
+                </button>
+            </div>
+
+            <!-- STUDENT LOGIN FORM -->
+            <form id="loginForm" class="role-form active" novalidate>
+                <div class="form-group">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" name="studentId" placeholder="e.g. STU-101" autocomplete="off" value="STU-101">
+                    <p class="error-text" id="studentIdError">Student ID is required.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentName">Student Full Name</label>
+                    <input type="text" id="studentName" name="studentName" placeholder="e.g. Jane Doe" autocomplete="off" value="Jane Doe">
+                    <p class="error-text" id="studentNameError">Student Name is required.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="examCode">Assessment Access Code</label>
+                    <input type="text" id="examCode" name="examCode" placeholder="e.g. AI-2026" autocomplete="off" value="AI-2026">
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--full" id="startBtn">
+                    Start Assessment →
+                </button>
+            </form>
+
+            <!-- FACULTY / INVIGILATOR LOGIN FORM -->
+            <form id="facultyLoginForm" class="role-form hidden" novalidate>
+                <div class="form-group">
+                    <label for="facultyId">Faculty ID / Email</label>
+                    <input type="text" id="facultyId" name="facultyId" placeholder="e.g. FAC-101" autocomplete="off" value="FAC-101">
+                    <p class="error-text" id="facultyIdError">Faculty ID is required.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="facultyName">Faculty Name</label>
+                    <input type="text" id="facultyName" name="facultyName" placeholder="e.g. Prof. Alan Turing" autocomplete="off" value="Prof. Alan Turing">
+                    <p class="error-text" id="facultyNameError">Faculty Name is required.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="facultyPasscode">Invigilator Passcode</label>
+                    <input type="password" id="facultyPasscode" name="facultyPasscode" placeholder="Passcode (Default: FAC-2026)" autocomplete="off" value="FAC-2026">
+                    <p class="error-text" id="facultyPasscodeError">Passcode is required (Use FAC-2026).</p>
+                </div>
+
+                <div class="passcode-hint">
+                    💡 <span>Default Faculty Passcode: <strong>FAC-2026</strong></span>
+                </div>
+
+                <button type="submit" class="btn btn--secondary btn--full" id="facultyStartBtn">
+                    Access Command Dashboard 🛡️
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

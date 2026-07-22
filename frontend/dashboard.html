@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assessment Monitor — Invigilator Command Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body"><style>
+    .dash-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 24px;
+        background: var(--color-surface, #fff);
+        border-bottom: 1px solid var(--color-border, #e2e8f0);
+        gap: 16px;
+        flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .dash-topbar__left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .dash-topbar__logo {
+        width: 30px; height: 30px; border-radius: 8px;
+        background: linear-gradient(135deg, #2563eb, #6366f1);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .dash-topbar__logo svg { display: block; }
+    .dash-topbar__title {
+        font-size: 0.9375rem;
+        font-weight: 700;
+        color: var(--color-text, #0f172a);
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+    }
+    .dash-topbar__right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .dash-topbar__badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: #f0fdf4;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+        white-space: nowrap;
+    }
+    .dash-topbar__divider {
+        width: 1px; height: 18px;
+        background: var(--color-border, #e2e8f0);
+        margin: 0 2px;
+    }
+</style>
+
+<!-- Clean Slim Top Bar -->
+<nav class="dash-topbar">
+    <div class="dash-topbar__left">
+        <div class="dash-topbar__logo">
+            <svg width="18" height="18" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 10.5C8 9.67 8.67 9 9.5 9H13.5C14.33 9 15 9.67 15 10.5V17.5C15 18.33 14.33 19 13.5 19H9.5C8.67 19 8 18.33 8 17.5V10.5Z" fill="white" fill-opacity="0.9"/>
+                <path d="M13 12.5C13 11.67 13.67 11 14.5 11H18.5C19.33 11 20 11.67 20 12.5V17.5C20 18.33 19.33 19 18.5 19H14.5C13.67 19 13 18.33 13 17.5V12.5Z" fill="white" fill-opacity="0.6"/>
+            </svg>
+        </div>
+        <span class="dash-topbar__title">Invigilator Dashboard</span>
+        <span id="activeCountBadge" class="dash-topbar__badge">● 0 Active</span>
+    </div>
+    <div class="dash-topbar__right">
+        <button id="seedDemoBtn" class="btn btn--primary btn--sm">⚡ Demo</button>
+        <button id="toggleAlarmSoundBtn" class="btn btn--secondary btn--sm">🔔 Alarm: ON</button>
+        <button id="clearSessionsBtn" class="btn btn--outline btn--sm">🗑️ Clear</button>
+        <div class="dash-topbar__divider"></div>
+        <a href="index.html" class="btn btn--secondary btn--sm">← Login</a>
+    </div>
+</nav>
+
+
+    <main class="dashboard-container">
+        <!-- Top Summary Cards -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-card__header">
+                    <span class="metric-card__label">Active Student Desktops</span>
+                    <span class="metric-card__icon">🖥️</span>
+                </div>
+                <div class="metric-card__value" id="dashTotalStudents">0</div>
+                <div class="metric-card__subtext">Live desktop & camera streams</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-card__header">
+                    <span class="metric-card__label">Clean / Low Risk</span>
+                    <span class="metric-card__icon">✅</span>
+                </div>
+                <div class="metric-card__value" id="dashLowRiskCount">0</div>
+                <div class="metric-card__subtext">Compliant behavior pattern</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-card__header">
+                    <span class="metric-card__label">Flagged / High Risk</span>
+                    <span class="metric-card__icon">⚠️</span>
+                </div>
+                <div class="metric-card__value" id="dashHighRiskCount" style="color: #dc2626;">0</div>
+                <div class="metric-card__subtext">Requires invigilator attention</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-card__header">
+                    <span class="metric-card__label">Average Integrity</span>
+                    <span class="metric-card__icon">🛡️</span>
+                </div>
+                <div class="metric-card__value" id="dashAvgIntegrity">100%</div>
+                <div class="metric-card__subtext">Across all active exam sessions</div>
+            </div>
+        </section>
+
+        <!-- Multi-Student Live Monitoring Wall Grid -->
+        <section class="wall-section">
+            <div class="wall-section__header">
+                <div>
+                    <h2 class="wall-section__title">🖥️ Student Desktop Screen Shares — Live Monitoring Grid</h2>
+                    <p class="wall-section__desc">All student desktop screens are streamed live as the primary view. Camera feeds appear as a small PIP overlay on each screen tile. Sorted by risk level priority (highest risk first).</p>
+                </div>
+                <div class="wall-section__filters">
+                    <button class="view-mode-btn active" id="gridViewBtn" title="Show Extra Large Icons Grid">🖼️ Extra Large Icons</button>
+                    <button class="view-mode-btn" id="listViewBtn" title="Show Priority Table List">📋 Priority Table</button>
+                    <span style="border-left: 1px solid var(--color-border); margin: 0 4px;"></span>
+                    <button class="filter-btn active" data-filter="all">All Desktops (Priority Sorted)</button>
+                    <button class="filter-btn" data-filter="high_risk">⚠️ High Risk Only</button>
+                </div>
+            </div>
+
+            <div class="student-grid" id="studentGrid">
+                <div class="grid-empty">
+                    <div class="grid-empty__icon">🖥️</div>
+                    <h3>Waiting for student laptops to join...</h3>
+                    <p>Open <a href="exam.html" target="_blank" style="color: #2563eb; text-decoration: underline;">exam.html</a> on candidate laptops to start streaming desktop & camera feeds here.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Global Real-Time Incident Audit Feed -->
+        <section class="dash-panel">
+            <div class="dash-panel__header">
+                <h3 class="dash-panel__title">Real-Time Malpractice Incident & Anomaly Audit Stream</h3>
+                <span id="dashTotalEventsBadge" class="log-badge">0 Anomaly Events</span>
+            </div>
+            <div class="audit-log-list" id="globalAuditFeed">
+                <div class="log-empty">No malpractice incidents or unusual behavior recorded.</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- AUTOMATIC ANOMALY FULL-SCREEN ESCALATION MODAL -->
+    <div class="anomaly-modal-overlay hidden" id="anomalyModal">
+        <div class="anomaly-modal-card">
+            <div class="anomaly-modal__header">
+                <div class="anomaly-modal__badge">
+                    <span class="pulse-dot"></span>
+                    🚨 AUTOMATIC UNUSUAL BEHAVIOR ESCALATION
+                </div>
+                <button class="anomaly-modal__close" id="closeAnomalyModalBtn">&times;</button>
+            </div>
+
+            <div class="anomaly-modal__body">
+                <div class="anomaly-modal__student-info">
+                    <div>
+                        <h2 class="anomaly-modal__student-name" id="modalStudentName">Student Candidate</h2>
+                        <p class="anomaly-modal__student-id">Student ID: <span id="modalStudentId">--</span></p>
+                    </div>
+                    <span id="modalRiskBadge" class="risk-badge risk-badge--critical">Risk: 65 (HIGH)</span>
+                </div>
+
+                <div class="anomaly-modal__media-grid" style="grid-template-columns: 1fr;">
+                    <div class="modal-media-box">
+                        <span class="media-box-label">🖥️ Live Desktop Screen Share</span>
+                        <img id="modalScreenImg" class="modal-media-img" src="" alt="Live Screen Stream" style="width:100%;">
+                    </div>
+                </div>
+                <!-- Hidden camera img kept for JS compatibility (not displayed) -->
+                <img id="modalCameraImg" src="" alt="" style="display:none;">
+
+                <!-- Telemetry Metrics in Escalation View -->
+                <div class="telemetry-grid" style="margin-top: 14px;">
+                    <div class="telemetry-item">
+                        <span class="telemetry-label">Eye Gaze Direction</span>
+                        <span id="modalGazePill" class="proctor-pill proctor-pill--danger">Looking Left</span>
+                    </div>
+                    <div class="telemetry-item">
+                        <span class="telemetry-label">Browser Application Focus</span>
+                        <span id="modalFocusPill" class="proctor-pill proctor-pill--danger">Tab Switched</span>
+                    </div>
+                    <div class="telemetry-item">
+                        <span class="telemetry-label">Audio Ambient Level</span>
+                        <span id="modalAudioLevel" class="proctor-pill proctor-pill--warning">Voice / Speech Activity</span>
+                    </div>
+                </div>
+
+                <!-- Latest Anomaly Alert Description -->
+                <div class="anomaly-alert-banner">
+                    <strong id="modalIncidentCategory">[ANOMALY DETECTED]</strong>
+                    <p id="modalIncidentReason">Candidate shifted eye gaze off-screen and switched browser windows.</p>
+                </div>
+
+                <div class="anomaly-modal__actions">
+                    <button id="dismissAnomalyBtn" class="btn btn--secondary">Dismiss Escalation</button>
+                    <button id="logWarningBtn" class="btn btn--primary">Log Official Malpractice Warning</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
