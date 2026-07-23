@@ -511,18 +511,8 @@ function initExamPage() {
     snapCanvas.width = 640;
     snapCanvas.height = 360;
 
-    // Dedicated high-res canvas for screen share capture
-    const screenSnapCanvas = document.createElement("canvas");
-    screenSnapCanvas.width = 640;
-    screenSnapCanvas.height = 360;
-
-    function captureVideoFrame(vEl, isScreen = false) {
+    function captureVideoFrame(vEl) {
         if (!vEl || vEl.readyState < 2 || !vEl.videoWidth) return null;
-        if (isScreen) {
-            const ctx = screenSnapCanvas.getContext("2d");
-            ctx.drawImage(vEl, 0, 0, screenSnapCanvas.width, screenSnapCanvas.height);
-            return screenSnapCanvas.toDataURL("image/jpeg", 0.72);
-        }
         const ctx = snapCanvas.getContext("2d");
         ctx.drawImage(vEl, 0, 0, snapCanvas.width, snapCanvas.height);
         return snapCanvas.toDataURL("image/jpeg", 0.85);
@@ -572,7 +562,7 @@ function initExamPage() {
     async function sendTelemetryHeartbeat() {
         try {
             const cameraFrame = captureVideoFrame(videoEl);
-            let screenFrame = screenVideoEl ? captureVideoFrame(screenVideoEl, true) : null;
+            let screenFrame = screenVideoEl ? captureVideoFrame(screenVideoEl) : null;
             if (!screenFrame) {
                 screenFrame = generateFallbackScreenFrame();
             }
@@ -607,8 +597,8 @@ function initExamPage() {
         }
     }
 
-    // Periodic heartbeat every 600ms (~1.6 FPS)
-    setInterval(sendTelemetryHeartbeat, 600);
+    // Periodic heartbeat every 1.5s
+    setInterval(sendTelemetryHeartbeat, 1500);
 
     // Helper: Add Risk Points & Record Incident Event
     function addRiskPoints(points, reason, category = "GENERAL") {
@@ -885,13 +875,8 @@ function initExamPage() {
 
             if (screenVideoEl) {
                 screenVideoEl.srcObject = screenStream;
-                // Use visibility:hidden instead of display:none — keeps video pipeline
-                // active so captureVideoFrame can read frames without stalling
-                screenVideoEl.style.position = 'absolute';
-                screenVideoEl.style.visibility = 'hidden';
-                screenVideoEl.style.pointerEvents = 'none';
-                screenVideoEl.style.width = '1px';
-                screenVideoEl.style.height = '1px';
+                // IMPORTANT: Hidden from student — they don't see their own screen share
+                screenVideoEl.style.display = "none";
                 screenVideoEl.play().catch(e => console.warn("screenVideo play warning:", e));
             }
 
@@ -1228,8 +1213,8 @@ function initExamPage() {
                 // ── AUDIO SPIKE DETECTION ──
                 // Threshold 35% filters out breathing, fans, AC, keyboard — catches actual speech
                 const AUDIO_THRESHOLD = 35;
-                const SPIKE_DURATION  = 4.0;   // must be sustained for 4s
-                const SILENCE_RESET   = 1500;  // must be silent 1.5s before re-arming
+                const SPIKE_DURATION = 4.0;   // must be sustained for 4s
+                const SILENCE_RESET = 1500;  // must be silent 1.5s before re-arming
 
                 if (volumePercent > AUDIO_THRESHOLD) {
                     silenceSince = null; // reset silence timer while loud
@@ -1846,9 +1831,9 @@ function initDashboardPage() {
                                 </thead>
                                 <tbody>
                                     ${filtered.map((s, idx) => {
-                                        const initial = (s.studentName || "ST").charAt(0).toUpperCase();
-                                        const isFlagged = s.riskScore >= 35;
-                                        return `
+                        const initial = (s.studentName || "ST").charAt(0).toUpperCase();
+                        const isFlagged = s.riskScore >= 35;
+                        return `
                                             <tr class="${isFlagged ? 'row-flagged' : ''}">
                                                 <td>
                                                     <span class="risk-badge risk-badge--${(s.riskLevel || 'low').toLowerCase()}">
@@ -1867,10 +1852,10 @@ function initDashboardPage() {
                                                 </td>
                                                 <td>
                                                     <!-- Screen Share is the primary display -->
-                                                    ${s.screenFrame 
-                                                        ? `<img src="${s.screenFrame}" class="list-stream-thumb" alt="Desktop Screen" style="width:240px;height:140px;">` 
-                                                        : `<div class="list-stream-placeholder" style="width:240px;height:140px;">Desktop Screen Off</div>`
-                                                    }
+                                                    ${s.screenFrame
+                                ? `<img src="${s.screenFrame}" class="list-stream-thumb" alt="Desktop Screen" style="width:240px;height:140px;">`
+                                : `<div class="list-stream-placeholder" style="width:240px;height:140px;">Desktop Screen Off</div>`
+                            }
                                                 </td>
                                                 <td>
                                                     <div style="display:flex; gap:4px; flex-wrap:wrap;">
@@ -1890,7 +1875,7 @@ function initDashboardPage() {
                                                 </td>
                                             </tr>
                                         `;
-                                    }).join("")}
+                    }).join("")}
                                 </tbody>
                             </table>
                         </div>
@@ -1930,18 +1915,18 @@ function initDashboardPage() {
                                 <!-- PRIMARY: Full Desktop Screen Share (dominant display) -->
                                 <div class="stream-box stream-box--large" style="position:relative;">
                                     <span class="stream-label">🖥️ Desktop Screen ${hasScreen ? '● Live' : '— Awaiting Share'}</span>
-                                    ${s.screenFrame 
-                                        ? `<img src="${s.screenFrame}" class="stream-img" alt="Desktop Screen Stream" style="width:100%;height:100%;object-fit:cover;">` 
-                                        : `<div class="stream-placeholder" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;"><span style="font-size:1.5rem;">🖥️</span><span style="font-size:0.7rem;">Awaiting Screen Share</span></div>`
-                                    }
+                                    ${s.screenFrame
+                                ? `<img src="${s.screenFrame}" class="stream-img" alt="Desktop Screen Stream" style="width:100%;height:100%;object-fit:cover;">`
+                                : `<div class="stream-placeholder" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;"><span style="font-size:1.5rem;">🖥️</span><span style="font-size:0.7rem;">Awaiting Screen Share</span></div>`
+                            }
 
                                     <!-- Small PIP: Camera feed overlay (bottom-right) -->
                                     <div class="pip-camera-box" title="Candidate Camera Feed">
                                         <span class="pip-label">📷 Cam</span>
-                                        ${hasCam 
-                                            ? `<img src="${s.cameraFrame}" class="stream-img" alt="Camera">` 
-                                            : `<div class="stream-placeholder" style="font-size:0.55rem;padding:2px;">Cam Off</div>`
-                                        }
+                                        ${hasCam
+                                ? `<img src="${s.cameraFrame}" class="stream-img" alt="Camera">`
+                                : `<div class="stream-placeholder" style="font-size:0.55rem;padding:2px;">Cam Off</div>`
+                            }
                                     </div>
                                 </div>
 
@@ -2018,8 +2003,8 @@ function initDashboardPage() {
         console.warn("SSE connection fallback to interval polling:", sseErr);
     }
 
-    // Interval polling every 600ms (~1.6 FPS)
-    setInterval(fetchAndRenderSessions, 600);
+    // Interval polling every 1.5s
+    setInterval(fetchAndRenderSessions, 1500);
     fetchAndRenderSessions();
 }
 
