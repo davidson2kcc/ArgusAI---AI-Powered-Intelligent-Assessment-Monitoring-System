@@ -511,8 +511,18 @@ function initExamPage() {
     snapCanvas.width = 640;
     snapCanvas.height = 360;
 
-    function captureVideoFrame(vEl) {
+    // Dedicated high-res canvas for screen share capture
+    const screenSnapCanvas = document.createElement("canvas");
+    screenSnapCanvas.width = 640;
+    screenSnapCanvas.height = 360;
+
+    function captureVideoFrame(vEl, isScreen = false) {
         if (!vEl || vEl.readyState < 2 || !vEl.videoWidth) return null;
+        if (isScreen) {
+            const ctx = screenSnapCanvas.getContext("2d");
+            ctx.drawImage(vEl, 0, 0, screenSnapCanvas.width, screenSnapCanvas.height);
+            return screenSnapCanvas.toDataURL("image/jpeg", 0.72);
+        }
         const ctx = snapCanvas.getContext("2d");
         ctx.drawImage(vEl, 0, 0, snapCanvas.width, snapCanvas.height);
         return snapCanvas.toDataURL("image/jpeg", 0.85);
@@ -562,7 +572,7 @@ function initExamPage() {
     async function sendTelemetryHeartbeat() {
         try {
             const cameraFrame = captureVideoFrame(videoEl);
-            let screenFrame = screenVideoEl ? captureVideoFrame(screenVideoEl) : null;
+            let screenFrame = screenVideoEl ? captureVideoFrame(screenVideoEl, true) : null;
             if (!screenFrame) {
                 screenFrame = generateFallbackScreenFrame();
             }
@@ -597,8 +607,8 @@ function initExamPage() {
         }
     }
 
-    // Periodic heartbeat every 1.5s
-    setInterval(sendTelemetryHeartbeat, 1500);
+    // Periodic heartbeat every 600ms (~1.6 FPS)
+    setInterval(sendTelemetryHeartbeat, 600);
 
     // Helper: Add Risk Points & Record Incident Event
     function addRiskPoints(points, reason, category = "GENERAL") {
@@ -2003,8 +2013,8 @@ function initDashboardPage() {
         console.warn("SSE connection fallback to interval polling:", sseErr);
     }
 
-    // Interval polling every 1.5s
-    setInterval(fetchAndRenderSessions, 1500);
+    // Interval polling every 600ms (~1.6 FPS)
+    setInterval(fetchAndRenderSessions, 600);
     fetchAndRenderSessions();
 }
 
