@@ -885,8 +885,13 @@ function initExamPage() {
 
             if (screenVideoEl) {
                 screenVideoEl.srcObject = screenStream;
-                // IMPORTANT: Hidden from student — they don't see their own screen share
-                screenVideoEl.style.display = "none";
+                // Use visibility:hidden instead of display:none — keeps video pipeline
+                // active so captureVideoFrame can read frames without stalling
+                screenVideoEl.style.position = 'absolute';
+                screenVideoEl.style.visibility = 'hidden';
+                screenVideoEl.style.pointerEvents = 'none';
+                screenVideoEl.style.width = '1px';
+                screenVideoEl.style.height = '1px';
                 screenVideoEl.play().catch(e => console.warn("screenVideo play warning:", e));
             }
 
